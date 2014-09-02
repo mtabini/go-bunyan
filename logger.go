@@ -2,9 +2,11 @@ package bunyan
 
 import (
 	"fmt"
+	"log"
 )
 
 type Logger struct {
+	*log.Logger
 	name    string
 	streams []StreamInterface
 }
@@ -30,7 +32,7 @@ func (l *Logger) Log(e *LogEntry) {
 }
 
 func (l *Logger) Logln(level LogLevel, message string) *LogEntry {
-	e := NewLogEntry(level, message, nil)
+	e := NewLogEntry(level, message)
 
 	l.Log(e)
 
@@ -38,15 +40,7 @@ func (l *Logger) Logln(level LogLevel, message string) *LogEntry {
 }
 
 func (l *Logger) LogF(level LogLevel, format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(level, fmt.Sprintf(format, values...), nil)
-
-	l.Log(e)
-
-	return e
-}
-
-func (l *Logger) LogD(level LogLevel, message string, data interface{}) *LogEntry {
-	e := NewLogEntry(level, message, data)
+	e := NewLogEntry(level, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
@@ -54,7 +48,7 @@ func (l *Logger) LogD(level LogLevel, message string, data interface{}) *LogEntr
 }
 
 func (l *Logger) Trace(message string) *LogEntry {
-	e := NewLogEntry(Trace, message, nil)
+	e := NewLogEntry(Trace, message)
 
 	l.Log(e)
 
@@ -62,16 +56,7 @@ func (l *Logger) Trace(message string) *LogEntry {
 }
 
 func (l *Logger) TraceF(format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(Trace, fmt.Sprintf(format, values...), nil)
-
-	l.Log(e)
-
-	return e
-}
-
-func (l *Logger) TraceD(message string, data interface{}) *LogEntry {
-
-	e := NewLogEntry(Trace, message, data)
+	e := NewLogEntry(Trace, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
@@ -79,7 +64,7 @@ func (l *Logger) TraceD(message string, data interface{}) *LogEntry {
 }
 
 func (l *Logger) Debug(message string) *LogEntry {
-	e := NewLogEntry(Debug, message, nil)
+	e := NewLogEntry(Debug, message)
 
 	l.Log(e)
 
@@ -87,15 +72,7 @@ func (l *Logger) Debug(message string) *LogEntry {
 }
 
 func (l *Logger) DebugF(format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(Debug, fmt.Sprintf(format, values...), nil)
-
-	l.Log(e)
-
-	return e
-}
-
-func (l *Logger) DebugD(message string, data interface{}) *LogEntry {
-	e := NewLogEntry(Debug, message, data)
+	e := NewLogEntry(Debug, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
@@ -103,7 +80,7 @@ func (l *Logger) DebugD(message string, data interface{}) *LogEntry {
 }
 
 func (l *Logger) Info(message string) *LogEntry {
-	e := NewLogEntry(Info, message, nil)
+	e := NewLogEntry(Info, message)
 
 	l.Log(e)
 
@@ -111,15 +88,7 @@ func (l *Logger) Info(message string) *LogEntry {
 }
 
 func (l *Logger) InfoF(format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(Info, fmt.Sprintf(format, values...), nil)
-
-	l.Log(e)
-
-	return e
-}
-
-func (l *Logger) InfoD(message string, data interface{}) *LogEntry {
-	e := NewLogEntry(Info, message, data)
+	e := NewLogEntry(Info, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
@@ -127,7 +96,7 @@ func (l *Logger) InfoD(message string, data interface{}) *LogEntry {
 }
 
 func (l *Logger) Warn(message string) *LogEntry {
-	e := NewLogEntry(Warn, message, nil)
+	e := NewLogEntry(Warn, message)
 
 	l.Log(e)
 
@@ -135,15 +104,7 @@ func (l *Logger) Warn(message string) *LogEntry {
 }
 
 func (l *Logger) WarnF(format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(Warn, fmt.Sprintf(format, values...), nil)
-
-	l.Log(e)
-
-	return e
-}
-
-func (l *Logger) WarnD(message string, data interface{}) *LogEntry {
-	e := NewLogEntry(Warn, message, data)
+	e := NewLogEntry(Warn, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
@@ -151,7 +112,7 @@ func (l *Logger) WarnD(message string, data interface{}) *LogEntry {
 }
 
 func (l *Logger) Error(message string) *LogEntry {
-	e := NewLogEntry(Error, message, nil)
+	e := NewLogEntry(Error, message)
 
 	l.Log(e)
 
@@ -159,15 +120,7 @@ func (l *Logger) Error(message string) *LogEntry {
 }
 
 func (l *Logger) ErrorF(format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(Error, fmt.Sprintf(format, values...), nil)
-
-	l.Log(e)
-
-	return e
-}
-
-func (l *Logger) ErrorD(message string, data interface{}) *LogEntry {
-	e := NewLogEntry(Error, message, data)
+	e := NewLogEntry(Error, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
@@ -175,7 +128,7 @@ func (l *Logger) ErrorD(message string, data interface{}) *LogEntry {
 }
 
 func (l *Logger) Fatal(message string) *LogEntry {
-	e := NewLogEntry(Fatal, message, nil)
+	e := NewLogEntry(Fatal, message)
 
 	l.Log(e)
 
@@ -183,17 +136,15 @@ func (l *Logger) Fatal(message string) *LogEntry {
 }
 
 func (l *Logger) FatalF(format string, values ...interface{}) *LogEntry {
-	e := NewLogEntry(Fatal, fmt.Sprintf(format, values...), nil)
+	e := NewLogEntry(Fatal, fmt.Sprintf(format, values...))
 
 	l.Log(e)
 
 	return e
 }
 
-func (l *Logger) FatalD(message string, data interface{}) *LogEntry {
-	e := NewLogEntry(Fatal, message, data)
+// log.Logger compatibility
 
-	l.Log(e)
-
-	return e
+func (l *Logger) Println(val interface{}) {
+	l.Logln(Info, fmt.Sprintf("%v", val))
 }
