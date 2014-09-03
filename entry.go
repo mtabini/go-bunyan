@@ -34,17 +34,18 @@ type Response struct {
 }
 
 type LogEntry struct {
-	Data      interface{} `json:"data,omitempty"`
-	Error     error       `json:"error,omitempty"`
-	Hostname  string      `json:"hostname"`
-	Level     LogLevel    `json:"level"`
-	Message   string      `json:"msg"`
-	Name      string      `json:"name"`
-	ProcessID int         `json:"pid"`
-	Request   *Request    `json:"req,omitempty"`
-	Response  *Response   `json:"res,omitempty"`
-	Time      time.Time   `json:"time"`
-	Version   int         `json:"v"`
+	Data       interface{} `json:"data,omitempty"`
+	Error      error       `json:"error,omitempty"`
+	Hostname   string      `json:"hostname"`
+	Level      LogLevel    `json:"level"`
+	Message    string      `json:"msg"`
+	Name       string      `json:"name"`
+	ProcessID  int         `json:"pid"`
+	Request    *Request    `json:"req,omitempty"`
+	Response   *Response   `json:"res,omitempty"`
+	StackTrace string      `json:"trace,omitemptry"`
+	Time       time.Time   `json:"time"`
+	Version    int         `json:"v"`
 }
 
 func hostname() string {
@@ -109,6 +110,10 @@ func (l *LogEntry) SetResponseBody(body []byte) {
 
 func (l *LogEntry) SetResponseError(err error) {
 	l.Error = err
+}
+
+func (l *LogEntry) SetStackTrace(trace string) {
+	l.StackTrace = trace
 }
 
 func (l *LogEntry) setLogger(logger *Logger) {
