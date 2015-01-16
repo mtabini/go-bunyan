@@ -4,20 +4,23 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"github.com/beefsack/go-rate"
 	"net/mail"
 	"net/smtp"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type EmailStream struct {
 	*Stream
-	recipient  string
-	mailServer string
-	template   *template.Template
+	recipient   string
+	mailServer  string
+	template    *template.Template
+	rateLimiter *rate.RateLimiter
 }
 
-func NewEmailStream(minLogLevel LogLevel, filter StreamFilter, templateSource string, recipient, mailServer string) (result *EmailStream) {
+func NewEmailStream(minLogLevel LogLevel, filter StreamFilter, templateSource string, recipient, mailServer string, minimumInterval time.Duration) (result *EmailStream) {
 	t, err := template.New("email").Parse(templateSource)
 
 	if err != nil {
@@ -29,15 +32,22 @@ func NewEmailStream(minLogLevel LogLevel, filter StreamFilter, templateSource st
 			MinLogLevel: minLogLevel,
 			Filter:      filter,
 		},
-		recipient:  recipient,
-		mailServer: mailServer,
-		template:   t,
+		recipient:   recipient,
+		mailServer:  mailServer,
+		template:    t,
+		rateLimiter: rate.New(1, minimumInterval),
 	}
 
 	return
 }
 
 func (s *EmailStream) Publish(l *LogEntry) {
+	if ok, _ := s.rateLimiter.Try(); !ok {
+		// No more than 1 e-mail for each period!
+
+		return
+	}
+
 	encodeRFC2047 := func(String string) string {
 		addr := mail.Address{String, ""}
 		return strings.Trim(addr.String(), " <>")
