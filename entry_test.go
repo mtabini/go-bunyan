@@ -8,9 +8,9 @@ func TestLogEntryCopy(t *testing.T) {
 	s := NewStdoutStream(Info, nil)
 	l := NewLogger("test", []StreamInterface{s})
 
-	e := NewLogEntry(Warn, "Test", nil)
+	e := NewLogEntry(Warn, "Test")
 
-	e2 := NewLogEntry(Warn, "Test 2", nil)
+	e2 := NewLogEntry(Warn, "Test 2")
 
 	l.Log(e)
 
