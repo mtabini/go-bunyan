@@ -35,7 +35,7 @@ type Response struct {
 
 type LogEntry struct {
 	Data        interface{} `json:"data,omitempty"`
-	Error       error       `json:"error,omitempty"`
+	Error       string      `json:"error,omitempty"`
 	Hostname    string      `json:"hostname"`
 	Level       LogLevel    `json:"level"`
 	Message     string      `json:"msg"`
@@ -110,7 +110,7 @@ func (l *LogEntry) SetResponseBody(body []byte) {
 }
 
 func (l *LogEntry) SetResponseError(err error) {
-	l.Error = err
+	l.Error = err.Error()
 }
 
 func (l *LogEntry) SetCompletedIn(completedIn string) {

@@ -33,7 +33,7 @@ func (s *BugsnagStream) Publish(l *LogEntry) {
 			return
 		}
 
-		err = l.Error
+		err = errors.New(l.Error)
 
 		if err == nil {
 			err = errors.New(l.Message)
