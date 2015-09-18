@@ -7,16 +7,28 @@ import (
 
 type Logger struct {
 	*log.Logger
-	name    string
-	streams []StreamInterface
+	name        string
+	streams     []StreamInterface
+	sync        bool
+	minLogLevel LogLevel
 }
 
 // Creates a new logger, given one or more streams
 func NewLogger(name string, streams []StreamInterface) *Logger {
 	return &Logger{
-		name:    name,
-		streams: streams,
+		name:     name,
+		streams:  streams,
+		sync:     false,
+		minLevel: 0,
 	}
+}
+
+func (l *Logger) SetSynchronous(sync bool) {
+	l.sync = sync
+}
+
+func (l *Logger) SetGlobalMinLogLevel(minLogLevel LogLevel) {
+	l.minLevel = minLogLevel
 }
 
 func (l *Logger) AddStream(s StreamInterface) {
@@ -26,8 +38,19 @@ func (l *Logger) AddStream(s StreamInterface) {
 func (l *Logger) Log(e *LogEntry) {
 	e.setLogger(l)
 
-	for _, stream := range l.streams {
-		go stream.Publish(e)
+	if e.Level < l.minLogLevel {
+		return
+	}
+
+	if l.sync {
+		for _, stream := range l.streams {
+			stream.Publish(e)
+		}
+	} else {
+		for _, stream := range l.streams {
+			go stream.Publish(e)
+		}
+
 	}
 }
 
