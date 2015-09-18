@@ -16,10 +16,10 @@ type Logger struct {
 // Creates a new logger, given one or more streams
 func NewLogger(name string, streams []StreamInterface) *Logger {
 	return &Logger{
-		name:     name,
-		streams:  streams,
-		sync:     false,
-		minLevel: 0,
+		name:        name,
+		streams:     streams,
+		sync:        false,
+		minLogLevel: 0,
 	}
 }
 
@@ -28,7 +28,7 @@ func (l *Logger) SetSynchronous(sync bool) {
 }
 
 func (l *Logger) SetGlobalMinLogLevel(minLogLevel LogLevel) {
-	l.minLevel = minLogLevel
+	l.minLogLevel = minLogLevel
 }
 
 func (l *Logger) AddStream(s StreamInterface) {
